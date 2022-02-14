@@ -1,0 +1,200 @@
+{%- set hostname = grains['id'] -%}
+
+saltinstall:
+  grains:
+    testgrain1: value1
+    testgrain2: value2
+#  epel: https://repo.saltstack.com/yum/redhat/salt-repo-latest-2.el7.noarch.rpm
+# master install and configuration 
+  master:
+    is_syndic: False
+    # use if master is syndic type
+    # syndic_master: 199.199.199.199
+    publish_port: 4505
+    ret_port: 4506
+    set_gpg: False
+    order_masters: True
+    state_events: False
+    token_expire: 86400
+    file_roots:
+      dev:
+        - /opt/salt/dev/states
+        - /opt/salt/dev/artifacts
+        - /opt/salt/dev/formulas/salt-formula-saltmanage
+    pillar_roots:
+      dev:
+        - /opt/salt/dev/pillars
+      test:
+        - /opt/salt/test/pillars
+    sudo_acl: False
+    publisher_acl:
+      smonko:
+        "dev.*":
+          - cmd.*
+          - test.ping
+          - test.versions
+          - file.*
+      saltop:
+        allhosts:
+          - .*
+    fileserver_backend:
+      - git
+      - roots
+    ext_pillar:
+      git:
+        "master http://git.posam.sk/dsi-devops/otc-dev-master-pillars.git":
+          env: dev
+# special format for the shared pillars for all the environment
+        "git@git.posam.sk:ris-ng-deploy/pillars/shared-all-salt-pillars.git":
+          env: all
+          branch: staging
+
+# optional
+          name: master
+          pubkey: /root/.ssh/id_rsa.pub
+          privkey: /root/.ssh/id_rsa
+# end optional
+# optional
+    gitfs_set:
+      pillar_gitfs_ssl_verify: False
+      git_pillar_ssl_verify: False
+      git_pillar_provider: pygit2
+      git_pillar_global_lock: False
+      git_pillar_pubkey: '/root/.ssh/id_rsa.pub'
+      git_pillar_privkey: '/root/.ssh/id_rsa'
+      gitfs_ssl_verify: False
+      gitfs_provider: gitpython
+# end optional
+    gitfs_remotes:
+      "http://git.posam.sk/dsi-devops/otc-dev-salt-states.git":
+        saltenv: 
+          dev:
+            branch: master
+            mountpoint: salt://
+          qa:
+            branch: develop
+            mountpoint: salt://
+      "http://git.posam.sk/dsi-devops/otc-dev-salt-files.git":
+        saltenv: 
+          dev:
+            branch: master
+            mountpoint: salt://files
+    # output:
+    #   show_timeout: true
+    #   show_jid: False
+    #   color: True
+    #   strip_colors: False
+    #   cli_summary: False
+    #   output: nested
+    # performance:
+    #   worker_threads: 5
+    #   salt_event_pub_hwm: 20000
+    #   event_publisher_pub_hwm: 10000
+    #   timeout: 10
+    # logging:
+    #   log_file: /var/log/salt/master
+    #   log_level: warning
+    #   log_datefmt: '%H:%M:%S'
+    #Repo for Windows minions
+    #winrepo_dir_ng: '/opt/salt/base/artifacts/win/repo-ng'
+    ldap:
+    # Active directory
+      auth.ldap.scope: 2
+      # Double quoting must be preserved!
+      auth.ldap.uri: "'ldap://sbaadco01.posam.sk'"
+      auth.ldap.tls: False
+      auth.ldap.no_verify: False
+      auth.ldap.anonymous: False
+      auth.ldap.basedn: dc=posam,dc=sk
+      auth.ldap.binddn: "cn=svc_salt_ldap,ou=Domain Service Accounts,dc=posam,dc=sk"
+      auth.ldap.bindpw: PASS
+      auth.ldap.activedirectory: True
+      # raw section must be preserved!
+      auth.ldap.filter: {% raw -%}sAMAccountName={{username}}{%- endraw %}
+      auth.ldap.accountattributename: sAMAccountName
+      auth.ldap.groupclass: group
+      auth.ldap.persontype: person
+    #ldap versions
+      # auth.ldap.scope: 2
+      # # Double quoting must be preserved!
+      # auth.ldap.uri: "'ldap://ldap.lab.local:389'"
+      # auth.ldap.tls: False
+      # auth.ldap.no_verify: False
+      # auth.ldap.anonymous: False
+      # auth.ldap.basedn: dc=parkdots,dc=local
+      # auth.ldap.binddn: uid=svc-ldap-bind,ou=people,dc=ServiceAccounts,dc=lab,dc=local
+      # auth.ldap.bindpw: PASS
+      # # Double quoting and raw section must be preserved!
+      # auth.ldap.filter: {% raw -%}"'(uid={{username}})'"{%- endraw %}
+      # auth.ldap.activedirectory: False
+    external_auth:
+      ldap:
+        svc-auto:
+          - "'.*'"
+          - "'@runner'"
+        GS-OTC-Salt-Admins%:
+          - "'.*'"
+      pam:
+        smonko:
+          - "'.*'"
+          - "'@runner'"
+# minion install and configuration
+  minion:
+    id: {{ hostname }}
+    # master: 192.168.13.185
+    master:
+      - 192.168.13.185
+      - 127.0.0.1
+    master_port: 4506
+    publish_port: 4505
+    environment: dev
+    state_top_saltenv: dev
+    default_top: dev
+    test: True
+#   master_type: failover / str / disabled
+    master_type: failover
+    master_alive_interval: 30
+    master_failback: True
+    master_failback_interval: 30
+    retry_dns: 0
+    # slack:
+    #   channel: general
+    #   api_key: xoxb-00000000-XXXXXXXXXXXXXXXXXXXXXXX
+    #   from_name: saltmaster
+    #   username: test
+    #   as_user: true
+    #   yaml_format: true
+    # proxy:
+    #   host: 172.23.23.6
+    #   port:
+    #   username: root
+    #   passwd: letmein
+    #   master_shuffle: false
+    # returnes: mysql,slack,redis
+    # logging:
+    #   log_file: /var/log/salt/minion
+    #   log_level: warning
+    #   log_datefmt: '%H:%M:%S'
+  winsaltinstaller: \\\\127.0.0.1\\packages\\Salt-Minion-Win\\Salt-Minion-2017.7.2-Py2-AMD64-Setup.exe
+  winexeinstaller: salt://winexe-1.00.1-1.2.x86_64.rpm
+  winminions:
+    win-sp3term10:
+      username: Administrator
+      password: Passw0rd
+      master: 127.0.0.1
+      host: 127.0.0.1
+  ssh-roster:
+    prod1:
+      host: host1.posam.sk
+      user: ubuntu
+      sudo: True
+      priv: /etc/salt/ssh_keys/sshkey.pem
+    prod2:
+      host: host2.posam.sk
+      user: ubuntu
+      sudo: True
+      passwd: Tralala
+  salt-api:
+    port: 8006
+    ssl_crt: /etc/pki/tls/certs/localhost.crt
+    ssl_key: /etc/pki/tls/certs/localhost.key

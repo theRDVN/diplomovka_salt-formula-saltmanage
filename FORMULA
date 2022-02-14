@@ -1,0 +1,9 @@
+name: saltmanage
+os: RedHat, CentOS
+os_family: RedHat
+version: 2.3.0
+release: 2
+summary: SaltStack formula to manage and install salt infrastructure
+description: SaltStack formula to manage and install salt infrastructure
+top_level_dir: saltmanage
+recommended:

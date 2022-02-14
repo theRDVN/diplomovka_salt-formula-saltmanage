@@ -1,0 +1,9 @@
+# This file is managed by Salt! Do not edit by hand!
+#
+{%- set roster_d = salt['pillar.get']('saltinstall:roster_defaults') -%}
+{%- if roster_d %}
+roster_defaults:
+{%- for k, v in roster_d.items() %}
+  {{ k }}: {{ v }}
+{%- endfor %}
+{%- endif %}

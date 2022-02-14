@@ -1,0 +1,7 @@
+---
+name: "configure_salt_master"
+description: "Workflow to configure saltmaster and restart service"
+enabled: true
+entry_point: "workflows/configure_salt_master.yaml"
+
+runner_type: "mistral-v2"

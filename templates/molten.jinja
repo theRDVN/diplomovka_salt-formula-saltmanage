@@ -1,0 +1,8 @@
+# This file is managed by Salt! Do not edit by hand!
+#
+
+rest_cherrypy:
+{%- for k, v in pillar.saltinstall.saltmolten.config.items() %}
+  {{ k }}: {{ v }}
+{%- endfor %}
+

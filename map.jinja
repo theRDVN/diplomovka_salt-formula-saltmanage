@@ -1,0 +1,98 @@
+{% if pillar.saltinstall.master is defined %}
+{%- set master_setting = {} %}
+
+
+{%- set master_publish_port = pillar.saltinstall.master.publish_port %}
+{%- set master_ret_port = pillar.saltinstall.master.ret_port %}
+{%- set master_set_gpg = pillar.saltinstall.master.set_gpg %}
+{%- set master_order_masters = pillar.saltinstall.master.order_masters %}
+{%- set master_state_events = pillar.saltinstall.master.state_events %}
+{%- set master_output_show_timeout = pillar.saltinstall.master.output.show_timeout %}
+{%- set master_output_show_jid = pillar.saltinstall.master.output.show_jid %}
+{%- set master_output_color = pillar.saltinstall.master.output.color %}
+{%- set master_output_strip_colors = pillar.saltinstall.master.output.strip_colors %}
+{%- set master_output_cli_summary = pillar.saltinstall.master.output.cli_summary %}
+{%- set master_output_output = pillar.saltinstall.master.output.output %}
+{%- set master_performance_worker_threads = pillar.saltinstall.master.performance.worker_threads %}
+{%- set master_performance_salt_event_pub_hwm = pillar.saltinstall.master.performance.salt_event_pub_hwm %}
+{%- set master_performance_event_publisher_pub_hwm = pillar.saltinstall.master.performance.event_publisher_pub_hwm %}
+{%- set master_performance_timeout = salt['pillar.get']('saltinstall:master:performance:timeout', '5') %}
+{%- set master_log_file = pillar.saltinstall.master.logging.log_file %}
+{%- set master_log_level = pillar.saltinstall.master.logging.log_level %}
+{%- set master_log_datefmt = pillar.saltinstall.master.logging.log_datefmt %}
+
+
+{%- do master_setting.update( {
+    'publish_port' : master_publish_port,
+    'ret_port' : master_ret_port,
+    'set_gpg' : master_set_gpg,
+    'order_masters' : master_order_masters,
+    'state_events' : master_state_events,
+    'output_show_timeout' : master_output_show_timeout,
+    'output_show_jid' : master_output_show_jid,
+    'output_color' : master_output_color,
+    'output_strip_colors' : master_output_strip_colors,
+    'output_cli_summary' : master_output_cli_summary,
+    'output_output' : master_output_output,
+    'worker_threads' : master_performance_worker_threads,
+    'salt_event_pub_hwm' : master_performance_salt_event_pub_hwm,
+    'event_publisher_pub_hwm' : master_performance_event_publisher_pub_hwm,
+    'timeout' : master_performance_timeout,
+    'log_file' : master_log_file,
+    'log_level' : master_log_level,
+    'log_datefmt' : master_log_datefmt
+
+}) %}
+
+{% endif %}
+
+{% if pillar.saltinstall.minion is defined %}
+{%- set minion_setting = {} %}
+
+{%- set minion_id = pillar.saltinstall.minion.id %}
+{%- set minion_master_port = pillar.saltinstall.minion.master_port %}
+{%- set minion_publish_port = pillar.saltinstall.minion.publish_port %}
+{%- set minion_state_top_saltenv = pillar.saltinstall.minion.state_top_saltenv %}
+{%- set minion_default_top = pillar.saltinstall.minion.default_top %}
+{%- set minion_test = pillar.saltinstall.minion.test %}
+
+{%- set log_file = pillar.saltinstall.minion.logging.log_file %}
+{%- set log_level = pillar.saltinstall.minion.logging.log_level %}
+{%- set log_datefmt = pillar.saltinstall.minion.logging.log_datefmt %}
+
+{%- do minion_setting.update( {
+    'id' : minion_id,
+    'master_port' : minion_master_port,
+    'publish_port' : minion_publish_port,
+    'state_top_saltenv' : minion_state_top_saltenv,
+    'default_top' : minion_default_top,
+    'test' : minion_test,
+    'log_file' : log_file,
+    'log_level' : log_level,
+    'log_datefmt' : log_datefmt
+}) %}
+
+{% if pillar.saltinstall.minion.slack is defined %}
+
+{%- set minion_slack = {} %}
+
+{%- set slack_channel  = pillar.saltinstall.minion.slack.channel %}
+{%- set slack_api_key = pillar.saltinstall.minion.slack.api_key %}
+{%- set slack_from_name = pillar.saltinstall.minion.slack.from_name %}
+{%- set slack_username = pillar.saltinstall.minion.slack.username %}
+{%- set slack_as_user = pillar.saltinstall.minion.slack.as_user %}
+{%- set slack_yaml_format = pillar.saltinstall.minion.slack.yaml_format %}
+
+{%- do minion_slack.update( {
+    'slack_channel' : slack_channel,
+    'slack_api_key' : slack_api_key,
+    'slack_from_name' : slack_from_name,
+    'slack_username' : slack_username,
+    'slack_as_user' : slack_as_user,
+    'slack_yaml_format' : slack_yaml_format
+
+}) %}
+
+{% endif %}
+
+{% endif %}

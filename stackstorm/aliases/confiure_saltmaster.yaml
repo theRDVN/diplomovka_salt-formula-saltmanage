@@ -1,0 +1,19 @@
+---
+name: "configure_saltmaster"
+action_ref: "default.configure_salt_master"
+description: "Apply configurations on SaltMaster using saltmanage.master from git pillar"
+formats:
+    - display: "Reconfigure saltmaster {{ context={'match': 'saltmaster'} }}"
+      representation:
+        - "Reconfigure saltmaster {{ context={'match': 'saltmaster'} }}"
+    - display: "Apply configuration to saltmaster {{ context={'match': 'saltmaster'} }}"
+      representation:
+        - "Apply configuration to saltmaster {{ context={'match': 'saltmaster'} }}"
+ack:
+    append_url: true
+result:
+  extra:
+    slack:
+      color: "#36a64f"
+  format:  |
+    I did my part.

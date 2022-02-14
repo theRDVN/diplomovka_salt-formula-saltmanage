@@ -1,0 +1,4 @@
+base:
+  '*':
+    - saltmanage-master
+    - saltmanage-minion

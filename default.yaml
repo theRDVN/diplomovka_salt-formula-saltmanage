@@ -1,0 +1,10 @@
+
+# minion default settings
+master_publisher_port: 4505
+master_return_port: 4506
+
+environment: base
+state_top_saltenv: base
+default_top: base
+
+test: False
